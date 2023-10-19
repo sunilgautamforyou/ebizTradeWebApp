@@ -269,6 +269,7 @@ table tr:nth-of-type(even) td {
 			<div class="col-md-4">
 				<select class="form-control" id="ReportType" aria-label="Default select example">
 					<option value="1">Daily Loan Register</option>
+					<option value="2">Due Register</option>
 				</select>
 			</div>
 			<div class="col-md-2">
