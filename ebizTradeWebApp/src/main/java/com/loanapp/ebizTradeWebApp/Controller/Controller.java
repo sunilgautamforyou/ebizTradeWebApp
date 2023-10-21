@@ -5,17 +5,24 @@ package com.loanapp.ebizTradeWebApp.Controller;
 
 
 
-import java.util.HashMap;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
-
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -29,8 +36,10 @@ import com.loanapp.ebizTradeWebApp.entity.LoginDto;
 import com.loanapp.ebizTradeWebApp.entity.ObjLoanDtl;
 import com.loanapp.ebizTradeWebApp.entity.ResponseWrapper;
 
-
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
 
 
 
@@ -45,6 +54,9 @@ public class Controller {
 
 	@Autowired  
 	HttpSession httpSession;
+	
+	@Autowired
+	HttpServletResponse httpServletresponse;
 	
 
 	@PostMapping("/login")
@@ -228,5 +240,41 @@ public class Controller {
 	public ResponseWrapper delPymntRecvd(@RequestBody ObjLoanDtl objLoanDtl) {
 		return iLoanAppService.updatePaymentRecevdInactive(objLoanDtl);
 	}	
+	
+	@SuppressWarnings("rawtypes")
+	@PostMapping("/reports-pending-dues")
+	public ResponseEntity<ByteArrayResource> generateDueReport(@RequestBody BarrowerDetails searchDataVal) throws IOException {
+		
+//		httpServletresponse.setHeader("Content-Disposition","attachment; filename=\"myFileName.xlsx\"");
+//		XSSFWorkbook wb = iLoanAppService.generatePendingDuesExcel(httpServletresponse);
+//		writeToOutputStream(httpServletresponse,wb);
+//		return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).build();
+
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		XSSFWorkbook workbook = iLoanAppService.generatePendingDuesExcel(httpServletresponse); // creates the workbook
+		HttpHeaders header = new HttpHeaders();
+		header.setContentType(new MediaType("application", "force-download"));
+		header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ProductTemplate.xlsx");
+		workbook.write(stream);
+		return new ResponseEntity<>(new ByteArrayResource(stream.toByteArray()),
+                header, HttpStatus.CREATED);
+//		  return ResponseEntity.ok() .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//		  .header("Content-Disposition", "attachment; filename=tutorials.xlsx")
+//		  .body(outputStream.toByteArray());
+		 
+		
+	}
+	
+	   public void writeToOutputStream(HttpServletResponse response,XSSFWorkbook wb){
+		    ServletOutputStream out ;
+		    try {
+		        out = response.getOutputStream();
+		        wb.write(out);
+		        //wb.close();
+		        out.close();
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    }	
+	   }
 
 }

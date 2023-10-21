@@ -260,7 +260,7 @@ table tr:nth-of-type(even) td {
 }
 </style>
 <body>
- <jsp:include page="header.jsp"/>
+ <%-- <jsp:include page="header.jsp"/> --%>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-2">
@@ -268,10 +268,12 @@ table tr:nth-of-type(even) td {
 			</div>
 			<div class="col-md-4">
 				<select class="form-control" id="ReportType" aria-label="Default select example">
+					<option value="0">--- Select Report Type ---</option>
 					<option value="1">Daily Loan Register</option>
 					<option value="2">Due Register</option>
 				</select>
 			</div>
+			<div id="selectPeriod" hidden="true">
 			<div class="col-md-2">
 				<p>Period:</p>
 			</div>		
@@ -281,6 +283,15 @@ table tr:nth-of-type(even) td {
 			<div class="col-md-2">
 				<input class="form-control" id="periodTO" type="text" placeholder='End date'>
 			</div>							
+		</div>
+		<div id="selLoanType" hidden="true">
+		<div class="col-md-2">
+			<p>Case Type:</p>
+		</div>
+			<div class="col-md-4">
+				<select class="form-control" id="loanTypeDrop" aria-label="Default select example"></select>
+			</div>	
+			</div>	
 		</div>
 		<br>
 		
@@ -357,7 +368,7 @@ table tr:nth-of-type(even) td {
 	
 	
 	</div>
-	<jsp:include page="footer.jsp" />
+	<%-- <jsp:include page="footer.jsp" /> --%>
 </body>
 <script type="text/javascript">
 	document.getElementById("periodFRM").readOnly = true;
@@ -435,11 +446,105 @@ table tr:nth-of-type(even) td {
 	  });	
 	function filldata() {
 		$('#optionData').html('');
-		 $("#msgId").removeClass('alert alert-danger');
+		$("#msgId").removeClass('alert alert-danger');
 		$("#alertMsg").html("");
-		getData();
+
+		if ($('#ReportType').val() == "1") {
+			getData();	
+		} else if ($('#ReportType').val() == "2") {
+			downLoadDueReport();
+		}
+		
 	}
 	
+	function downLoadDueReport() {
+		$.ajax({
+			//url: 'https://ebiztradewebapp.azurewebsites.net/reports-pending-dues',
+				url: '/ebizTradeWebApp/reports-pending-dues',
+			type: 'Post',
+		    contentType: 'application/json',
+			   data: JSON.stringify(
+		    {
+		    	"searchVarData":"A"
+		    }),	
+		    success: function (data) {
+ 		       $("#msgId").addClass("alert alert-success");
+			   $("#alertMsg").append(" Download Successfully ");	
+			    var sampleArr = base64ToArrayBuffer(b64_to_utf8(data));
+			    saveByteArray("SampleReport.xlsx", sampleArr);
+			   
+/* 			   var blob = new Blob([ base64ToArrayBuffer(Base64.getEncoder().encodeToString(fileBytes)) ], {
+                   type : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+               });			   
+			    var file = new File([blob], "file_name.xlsx", {lastModified: new Date()});
+			    var fileURL = URL.createObjectURL(file);
+ */			    
+			  // var blob = new File([data], {type: "application/vnd.ms-excel"});
+	        // var filename = prompt("Please enter the filename");
+		        //if(filename!=null && filename!="") {
+		            //saveAs(blob, [filename+'.xlsx']);
+		        	//download(data,filename+'.xlsx','application/vnd.ms-excel');
+		        	/* var file = new Blob([ data ], {
+                                type : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                            });
+		        	 var fileURL = URL.createObjectURL(file);
+		        	 var a         = document.createElement('a');
+		        	 a.href        = fileURL; 
+		        	 console.dir(fileURL);
+		        	 a.target      = '_blank';
+		        	 a.download    = filename+'.xlsx';
+		        	 document.body.appendChild(a);
+		        	 a.click(); */		        	
+/* 		        }else
+		            alert("please enter a filename!");  
+		    } */
+			   
+		    } ,
+		    error: function (error) {
+		        console.log(error);
+		    }
+		});
+	}
+	
+	function saveByteArray(reportName, byte) {
+	    var blob = new Blob([byte], {type: "application/vnd.ms-excel"});
+	    var link = document.createElement('a');
+	    link.href = window.URL.createObjectURL(blob);
+	    var fileName = reportName;
+	    link.download = fileName;
+	    link.click();
+	};	
+	function b64_to_utf8( str ) {
+	    str = str.replace(/\s/g, '');    
+	    return decodeURIComponent(escape(window.atob( str )));
+	};	
+	function base64ToArrayBuffer(base64) {
+	    var binaryString = window.atob(base64);
+	    var binaryLen = binaryString.length;
+	    var bytes = new Uint8Array(binaryLen);
+	    for (var i = 0; i < binaryLen; i++) {
+	        bytes[i] = binaryString.charCodeAt(i);
+	    }
+	    return bytes;
+	}	
+	// Function to download data to a file
+	function download(data, filename, type) {
+	    var file = new Blob([data], {type: type});
+	    if (window.navigator.msSaveOrOpenBlob) // IE10+
+	        window.navigator.msSaveOrOpenBlob(file, filename);
+	    else { // Others
+	        var a = document.createElement("a"),
+	                url = URL.createObjectURL(file);
+	        a.href = url;
+	        a.download = filename;
+	        document.body.appendChild(a);
+	        a.click();
+	        setTimeout(function() {
+	            document.body.removeChild(a);
+	            window.URL.revokeObjectURL(url);  
+	        }, 0); 
+	    }
+	}
 	function getData() {
 		$.ajax({
 			url: 'https://ebiztradewebapp.azurewebsites.net/reports-Loan-Issued',
@@ -755,5 +860,34 @@ table tr:nth-of-type(even) td {
 				      
 				  });
 				}
+			
+	$('#ReportType').on('change', function() {
+		if ($('#ReportType').val() == "1") {
+			$('#selectPeriod').show();	
+			$('#selLoanType').hide();
+		} else if ($('#ReportType').val() == "2") {
+			$('#selectPeriod').hide();
+			$('#selLoanType').show();
+			$('#loanTypeDrop').html('');
+			   $.ajax({
+				   // url: 'https://ebiztradewebapp.azurewebsites.net/get-all-loan-type',
+				    url: '/ebizTradeWebApp/get-all-loan-type',
+				    type: 'GET',
+				    dataType: 'json',
+				    success: function (data) {
+				        console.log(data);
+				        $('#loanTypeDrop').append('<option value=0>Please Select</option>');
+				        for(var i=0;i<data.length;i++){
+				        	 $('#loanTypeDrop').append('<option value='+data[i].loanTypeId+'>'+data[i].loanTypeName+'</option>');
+				        }
+				    },
+				    error: function (error) {
+				        console.log(`Error ${error}`);
+				    }
+				});			
+		}
+		
+	});
+			
 </script>
 </html>

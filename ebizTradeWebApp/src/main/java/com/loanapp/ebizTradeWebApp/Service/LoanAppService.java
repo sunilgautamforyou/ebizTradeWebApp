@@ -1,9 +1,14 @@
 package com.loanapp.ebizTradeWebApp.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.loanapp.ebizTradeWebApp.entity.BarrowerDetails;
 import com.loanapp.ebizTradeWebApp.entity.CustomerDto;
@@ -13,6 +18,10 @@ import com.loanapp.ebizTradeWebApp.entity.LoginDto;
 import com.loanapp.ebizTradeWebApp.entity.ObjLoanDtl;
 import com.loanapp.ebizTradeWebApp.entity.ResponseWrapper;
 import com.loanapp.ebizTradeWebApp.wrapper.PaymentReceiptWrapper;
+
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface LoanAppService {
 	public LoginDto loginUsingCreds(LoginDto loginDto);
@@ -35,4 +44,5 @@ public interface LoanAppService {
 	public List<DashboardDto> getLoanDataInActivePG(BarrowerDetails barrowerDetails);
 	public List<ObjLoanDtl> getPymntRevdInActiveDatPG(BarrowerDetails barrowerDetail);
 	public ResponseWrapper updatePaymentRecevdInactive(ObjLoanDtl objLoanDtl);
+	public XSSFWorkbook generatePendingDuesExcel(HttpServletResponse response) throws IOException;
 }

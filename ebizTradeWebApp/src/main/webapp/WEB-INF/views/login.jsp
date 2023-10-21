@@ -137,10 +137,10 @@ function login()
 			        if((data.id!=null) && (data.role=='ADMIN'))
 			        	{
 
-			        	location.href = "/ebizTradeWebApp/dashBoard";
+			        //	location.href = "/ebizTradeWebApp/dashBoard";
 
 			        //	location.href = "/ebizTradeWebApp/dashBoard"; 
-			        //	location.href = "https://ebiztradewebapp.azurewebsites.net/dashBoard";
+			        	location.href = "https://ebiztradewebapp.azurewebsites.net/dashBoard";
 			        	}
 			        if((data.id!=null) && (data.role=='SITE'))
 		        	{

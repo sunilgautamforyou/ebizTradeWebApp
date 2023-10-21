@@ -1,5 +1,11 @@
 package com.loanapp.ebizTradeWebApp.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,8 +19,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,8 +39,11 @@ import com.loanapp.ebizTradeWebApp.entity.ObjLnSOA;
 import com.loanapp.ebizTradeWebApp.entity.ObjLoanDtl;
 import com.loanapp.ebizTradeWebApp.entity.ResponseWrapper;
 import com.loanapp.ebizTradeWebApp.exception.CustomSqlExection;
+import com.loanapp.ebizTradeWebApp.helper.ExcelGenerator;
 import com.loanapp.ebizTradeWebApp.wrapper.PaymentReceiptWrapper;
 import com.loanapp.ebizTradeWebApp.wrapper.Utility;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 
 
@@ -307,6 +320,20 @@ public class LoanAppServiceImpl implements LoanAppService {
 			
 		}
 		return wrapper;
+	}
+
+	@Override
+	public XSSFWorkbook generatePendingDuesExcel(HttpServletResponse response) throws IOException {
+		BarrowerDetails searchDataVal = new BarrowerDetails();
+		ExcelGenerator genExcelReport = new ExcelGenerator();
+		searchDataVal.setSearchVarData("A");
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		List<DashboardDto> lstDashBoardDto = loanAppDao.getAllloanUserDashboardData(searchDataVal);
+		workbook = genExcelReport.generateExcel(lstDashBoardDto);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		workbook.write(outputStream);
+		//workbook.close();
+		return workbook;
 	}	
 
 }
