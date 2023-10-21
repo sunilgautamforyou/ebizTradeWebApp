@@ -44,5 +44,5 @@ public interface LoanAppService {
 	public List<DashboardDto> getLoanDataInActivePG(BarrowerDetails barrowerDetails);
 	public List<ObjLoanDtl> getPymntRevdInActiveDatPG(BarrowerDetails barrowerDetail);
 	public ResponseWrapper updatePaymentRecevdInactive(ObjLoanDtl objLoanDtl);
-	public XSSFWorkbook generatePendingDuesExcel(HttpServletResponse response) throws IOException;
+	public List<DashboardDto> generatePendingDuesExcel() throws IOException;
 }

@@ -8,6 +8,9 @@ package com.loanapp.ebizTradeWebApp.Controller;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Workbook;
@@ -35,8 +38,9 @@ import com.loanapp.ebizTradeWebApp.entity.LoanTypeDto;
 import com.loanapp.ebizTradeWebApp.entity.LoginDto;
 import com.loanapp.ebizTradeWebApp.entity.ObjLoanDtl;
 import com.loanapp.ebizTradeWebApp.entity.ResponseWrapper;
+import com.loanapp.ebizTradeWebApp.helper.ExcelGenerator;
+import com.loanapp.ebizTradeWebApp.helper.UserExcelExporter;
 
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
@@ -242,39 +246,28 @@ public class Controller {
 	}	
 	
 	@SuppressWarnings("rawtypes")
-	@PostMapping("/reports-pending-dues")
-	public ResponseEntity<ByteArrayResource> generateDueReport(@RequestBody BarrowerDetails searchDataVal) throws IOException {
-		
-//		httpServletresponse.setHeader("Content-Disposition","attachment; filename=\"myFileName.xlsx\"");
-//		XSSFWorkbook wb = iLoanAppService.generatePendingDuesExcel(httpServletresponse);
-//		writeToOutputStream(httpServletresponse,wb);
-//		return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).build();
+	@GetMapping("/reports-pending-dues")
+	public void generateDueReport() throws IOException {
 
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		XSSFWorkbook workbook = iLoanAppService.generatePendingDuesExcel(httpServletresponse); // creates the workbook
-		HttpHeaders header = new HttpHeaders();
-		header.setContentType(new MediaType("application", "force-download"));
-		header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ProductTemplate.xlsx");
-		workbook.write(stream);
-		return new ResponseEntity<>(new ByteArrayResource(stream.toByteArray()),
-                header, HttpStatus.CREATED);
-//		  return ResponseEntity.ok() .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//		  .header("Content-Disposition", "attachment; filename=tutorials.xlsx")
-//		  .body(outputStream.toByteArray());
-		 
+//		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//		XSSFWorkbook workbook = iLoanAppService.generatePendingDuesExcel(httpServletresponse); // creates the workbook
+//		HttpHeaders header = new HttpHeaders();
+//		header.setContentType(new MediaType("application", "force-download"));
+//		header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ProductTemplate.xlsx");
+//		workbook.write(stream);
+//		return new ResponseEntity<>(new ByteArrayResource(stream.toByteArray()),
+//                header, HttpStatus.CREATED);
 		
+		httpServletresponse.setContentType("application/octet-stream");
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String currentDateTime = dateFormatter.format(new Date());
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=users_" + currentDateTime + ".xlsx";
+		httpServletresponse.setHeader(headerKey, headerValue);
+		List<DashboardDto> dasboardDto = iLoanAppService.generatePendingDuesExcel(); // creates the workbook
+		UserExcelExporter excelExporter = new UserExcelExporter(dasboardDto);
+		excelExporter.export(httpServletresponse); 
 	}
 	
-	   public void writeToOutputStream(HttpServletResponse response,XSSFWorkbook wb){
-		    ServletOutputStream out ;
-		    try {
-		        out = response.getOutputStream();
-		        wb.write(out);
-		        //wb.close();
-		        out.close();
-		    } catch (IOException e) {
-		        e.printStackTrace();
-		    }	
-	   }
 
 }

@@ -452,10 +452,15 @@ table tr:nth-of-type(even) td {
 		if ($('#ReportType').val() == "1") {
 			getData();	
 		} else if ($('#ReportType').val() == "2") {
-			downLoadDueReport();
+			downloadPendingDueReport();
 		}
 		
 	}
+	
+	function downloadPendingDueReport() {
+		window.location.href = '/ebizTradeWebApp/reports-pending-dues';
+	}
+	
 	
 	function downLoadDueReport() {
 		$.ajax({

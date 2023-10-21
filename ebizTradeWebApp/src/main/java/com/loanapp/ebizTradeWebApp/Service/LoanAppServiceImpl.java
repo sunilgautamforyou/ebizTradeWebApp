@@ -323,17 +323,10 @@ public class LoanAppServiceImpl implements LoanAppService {
 	}
 
 	@Override
-	public XSSFWorkbook generatePendingDuesExcel(HttpServletResponse response) throws IOException {
+	public List<DashboardDto> generatePendingDuesExcel() throws IOException {
 		BarrowerDetails searchDataVal = new BarrowerDetails();
-		ExcelGenerator genExcelReport = new ExcelGenerator();
 		searchDataVal.setSearchVarData("A");
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		List<DashboardDto> lstDashBoardDto = loanAppDao.getAllloanUserDashboardData(searchDataVal);
-		workbook = genExcelReport.generateExcel(lstDashBoardDto);
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		workbook.write(outputStream);
-		//workbook.close();
-		return workbook;
+		return loanAppDao.getAllloanUserDashboardData(searchDataVal);
 	}	
 
 }
