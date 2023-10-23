@@ -30,6 +30,7 @@
  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" ></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" ></script>
  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js" ></script>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <style>
 .navbar {
@@ -262,6 +263,36 @@ table tr:nth-of-type(even) td {
 <body>
  <%-- <jsp:include page="header.jsp"/> --%>
 	<div class="container">
+  <!-- ---user Data model -->
+<div class="modal fade" id="userDataModel" role="dialog">
+			<div class="modal-dialog">
+				<!-- Modal content-->
+				<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">View Barrower Details</h4>
+				</div>
+					<div class="modal-body">
+						<div id=optionData>
+							<table class="table" id="userTable">
+								<thead id='tHead'>
+									<tr>
+										<th hidden>id</th>
+										<th>Barrower Name</th>
+										<th>Gaurnter Name</th>
+										<th>Area</th>
+										<th>Select One</th>
+									</tr>
+								</thead>
+								<tbody id='tbodyLoan'>
+		
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
 		<div class="row">
 			<div class="col-md-2">
 				<p>Report Type:</p>
@@ -298,8 +329,14 @@ table tr:nth-of-type(even) td {
 			<P>Choose:</P>
 			</div>
 			<div class="col-md-4">
-			 <label class="radio-inline"> <input type="radio" class="radioUser" id="selView" name="selActStatus" checked="checked">View</label>
-			 <label class="radio-inline"> <input type="radio" class="radioUser" id="selDownload" name="selIncStatus">Download Excel</label>
+			 <label class="radio-inline"> <input type="radio" class="radioUser" id="selView" name="selActStatus" checked="checked">View
+			 </label>
+			 <label class="radio-inline"> <input type="radio" class="radioUser" id="selDownload" name="selIncStatus">Download Excel
+			 </label>
+			<!--  <a href="" onclick="return searchBarrowerData()">search
+			 <img src="resources/images/search.gif" width="20" height="20" onclick="searchBarrowerData()" />
+			 </a> -->
+			<button  type="button" class="btn btn-default"  id="search" onclick="searchBarrowerData()">Search Customer</button> 
 			</div>
 			<div class="col-md-2">
 				<p>Customer:</p>
@@ -534,6 +571,17 @@ table tr:nth-of-type(even) td {
 		$('#selDownload').click(function() {
 			   $('#selView').prop('checked', false).checkboxradio('refresh');
 			});	
+		
+		function searchBarrowerData() {
+			
+		};		
+		
+		function checkAlrt() {
+			alert("OK");
+		};
+		
+		
+// --------------------------- JS for Issued/Received Statement -----------------------		
 
 	function getData() {
 		$.ajax({
