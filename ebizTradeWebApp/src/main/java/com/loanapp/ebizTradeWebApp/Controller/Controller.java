@@ -5,24 +5,13 @@ package com.loanapp.ebizTradeWebApp.Controller;
 
 
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,7 +27,6 @@ import com.loanapp.ebizTradeWebApp.entity.LoanTypeDto;
 import com.loanapp.ebizTradeWebApp.entity.LoginDto;
 import com.loanapp.ebizTradeWebApp.entity.ObjLoanDtl;
 import com.loanapp.ebizTradeWebApp.entity.ResponseWrapper;
-import com.loanapp.ebizTradeWebApp.helper.ExcelGenerator;
 import com.loanapp.ebizTradeWebApp.helper.UserExcelExporter;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -248,15 +236,6 @@ public class Controller {
 	@SuppressWarnings("rawtypes")
 	@GetMapping("/reports-pending-dues")
 	public void generateDueReport() throws IOException {
-
-//		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//		XSSFWorkbook workbook = iLoanAppService.generatePendingDuesExcel(httpServletresponse); // creates the workbook
-//		HttpHeaders header = new HttpHeaders();
-//		header.setContentType(new MediaType("application", "force-download"));
-//		header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ProductTemplate.xlsx");
-//		workbook.write(stream);
-//		return new ResponseEntity<>(new ByteArrayResource(stream.toByteArray()),
-//                header, HttpStatus.CREATED);
 		
 		httpServletresponse.setContentType("application/octet-stream");
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");

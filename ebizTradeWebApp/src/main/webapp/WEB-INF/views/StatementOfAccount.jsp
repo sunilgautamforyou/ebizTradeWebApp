@@ -293,6 +293,22 @@ table tr:nth-of-type(even) td {
 			</div>	
 			</div>	
 		</div>
+		<div class="row" id="divSelClintDueRpt" hidden="true">
+			<div class="col-md-2">
+			<P>Choose:</P>
+			</div>
+			<div class="col-md-4">
+			 <label class="radio-inline"> <input type="radio" class="radioUser" id="selView" name="selActStatus" checked="checked">View</label>
+			 <label class="radio-inline"> <input type="radio" class="radioUser" id="selDownload" name="selIncStatus">Download Excel</label>
+			</div>
+			<div class="col-md-2">
+				<p>Customer:</p>
+			</div>
+			<div class="col-md-4">
+				<input class="form-control" id="searchData" type="text" placeholder="Enter Name/Mobile No ......">
+			</div>
+			
+		</div>
 		<br>
 		
 
@@ -389,7 +405,7 @@ table tr:nth-of-type(even) td {
 		$('#userOpt').hide();
 		$('#tpymnt').hide();
 		$('#trcvd').hide();
-		
+		$('#view').attr('disabled','disabled');
 		$('#userOpt').hide();
 		 $(document).ajaxStart(function () {
 		        $('#wait').show();
@@ -459,6 +475,7 @@ table tr:nth-of-type(even) td {
 	
 	function downloadPendingDueReport() {
 		window.location.href = '/ebizTradeWebApp/reports-pending-dues';
+		
 	}
 	
 	
@@ -511,45 +528,13 @@ table tr:nth-of-type(even) td {
 		});
 	}
 	
-	function saveByteArray(reportName, byte) {
-	    var blob = new Blob([byte], {type: "application/vnd.ms-excel"});
-	    var link = document.createElement('a');
-	    link.href = window.URL.createObjectURL(blob);
-	    var fileName = reportName;
-	    link.download = fileName;
-	    link.click();
-	};	
-	function b64_to_utf8( str ) {
-	    str = str.replace(/\s/g, '');    
-	    return decodeURIComponent(escape(window.atob( str )));
-	};	
-	function base64ToArrayBuffer(base64) {
-	    var binaryString = window.atob(base64);
-	    var binaryLen = binaryString.length;
-	    var bytes = new Uint8Array(binaryLen);
-	    for (var i = 0; i < binaryLen; i++) {
-	        bytes[i] = binaryString.charCodeAt(i);
-	    }
-	    return bytes;
-	}	
-	// Function to download data to a file
-	function download(data, filename, type) {
-	    var file = new Blob([data], {type: type});
-	    if (window.navigator.msSaveOrOpenBlob) // IE10+
-	        window.navigator.msSaveOrOpenBlob(file, filename);
-	    else { // Others
-	        var a = document.createElement("a"),
-	                url = URL.createObjectURL(file);
-	        a.href = url;
-	        a.download = filename;
-	        document.body.appendChild(a);
-	        a.click();
-	        setTimeout(function() {
-	            document.body.removeChild(a);
-	            window.URL.revokeObjectURL(url);  
-	        }, 0); 
-	    }
-	}
+	$('#selView').click(function() {
+		   $('#selDownload').prop('checked', false).checkboxradio('refresh');
+		});
+		$('#selDownload').click(function() {
+			   $('#selView').prop('checked', false).checkboxradio('refresh');
+			});	
+
 	function getData() {
 		$.ajax({
 			url: 'https://ebiztradewebapp.azurewebsites.net/reports-Loan-Issued',
@@ -867,12 +852,15 @@ table tr:nth-of-type(even) td {
 				}
 			
 	$('#ReportType').on('change', function() {
+		$('#view').removeAttr('disabled');
 		if ($('#ReportType').val() == "1") {
 			$('#selectPeriod').show();	
 			$('#selLoanType').hide();
+			$('#divSelClintDueRpt').hide();
 		} else if ($('#ReportType').val() == "2") {
 			$('#selectPeriod').hide();
 			$('#selLoanType').show();
+			$('#divSelClintDueRpt').show();
 			$('#loanTypeDrop').html('');
 			   $.ajax({
 				   // url: 'https://ebiztradewebapp.azurewebsites.net/get-all-loan-type',
@@ -890,6 +878,9 @@ table tr:nth-of-type(even) td {
 				        console.log(`Error ${error}`);
 				    }
 				});			
+		}  else if ($('#ReportType').val() == "0") {
+			$('#view').attr('disabled','disabled');
+			$('#divSelClintDueRpt').hide();
 		}
 		
 	});

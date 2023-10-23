@@ -95,7 +95,7 @@ public class UserExcelExporter {
     	style.setFont(font);
     	XSSFCellStyle styleNumber = workbook.createCellStyle();
     	XSSFCellStyle hindiCurrency = workbook.createCellStyle();
-    	hindiCurrency.setDataFormat(dataformat.getFormat("₹#\\,##0"));
+    	hindiCurrency.setDataFormat(dataformat.getFormat("₹#\\0"));
     	styleNumber.setFont(font);
     	setExcelBorder(style);
     	setExcelBorder(hindiCurrency);

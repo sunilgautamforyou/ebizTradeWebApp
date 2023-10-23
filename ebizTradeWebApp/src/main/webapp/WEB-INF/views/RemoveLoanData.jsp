@@ -258,7 +258,7 @@ table tr:nth-of-type(even) td {
 	 <div class="row" id="searhBox">
 	  <div class="col-md-1"></div>
 	 <div class="col-md-4">
-	 <b>Enter Name/Mobile No./Email Id :</b>
+	 <b>Enter Name/Mobile No:</b>
 	 </div>
     <div class="col-md-4">
       <input class="form-control" id="searchData" type="text" placeholder="Enter Details......">
